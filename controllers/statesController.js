@@ -50,6 +50,106 @@ const getState = async (req, res) => {
 }
 
 
+const getCapital = async (req, res) => {
+    //given the state url param
+    //return stateName and capitalName for that state
+    let stateParam = req.params.state;
+    if (validState(stateParam)){
+        let states = await getStates();
+        states = states.filter(st => st.code == stateParam.toUpperCase());
+        res.json(states.map(el => ({
+            state: el.state,
+            capital: el.capital_city
+        }))[0]);
+
+
+    }   
+    else {
+        res.json({"message": "Invalid state abbreviation parameter"});
+    }
+}
+
+const getFunFact = async (req, res) => {
+    //given the state url param
+    //return stateName and capitalName for that state
+    let stateParam = req.params.state;
+    if (validState(stateParam)){
+        let states = await getStates();
+        states = states.filter(st => st.code == stateParam.toUpperCase());
+        let factsLength = states[0]['funfacts'].length;
+        if (factsLength > 0){
+            res.json({
+                "funfact": states[0].funfacts[Math.floor(Math.random() * factsLength)]
+            });
+        }
+        else {
+            stateName = states.state;
+            res.json({"message": "No Fun Facts found for " + stateName});
+        }
+
+    }   
+    else {
+        res.json({"message": "Invalid state abbreviation parameter"});
+    }
+}
+
+const getPopulation = async (req, res) => {
+    //given the state url param
+    //return stateName and capitalName for that state
+    let stateParam = req.params.state;
+    if (validState(stateParam)){
+        let states = await getStates();
+        states = states.filter(st => st.code == stateParam.toUpperCase());
+        res.json(states.map(el => ({
+            state: el.state,
+            population: el.population
+        }))[0]);
+
+
+    }   
+    else {
+        res.json({"message": "Invalid state abbreviation parameter"});
+    }
+}
+
+const getNickname = async (req, res) => {
+    //given the state url param
+    //return stateName and capitalName for that state
+    let stateParam = req.params.state;
+    if (validState(stateParam)){
+        let states = await getStates();
+        states = states.filter(st => st.code == stateParam.toUpperCase());
+        res.json(states.map(el => ({
+            state: el.state,
+            nickname: el.nickname
+        }))[0]);
+
+
+    }   
+    else {
+        res.json({"message": "Invalid state abbreviation parameter"});
+    }
+}
+
+
+const getAdmission = async (req, res) => {
+    //given the state url param
+    //return stateName and capitalName for that state
+    let stateParam = req.params.state;
+    if (validState(stateParam)){
+        let states = await getStates();
+        states = states.filter(st => st.code == stateParam.toUpperCase());
+        res.json(states.map(el => ({
+            state: el.state,
+            admitted: el.admission_date
+        }))[0]);
+
+
+    }   
+    else {
+        res.json({"message": "Invalid state abbreviation parameter"});
+    }
+}
 
 const addNewFact = async (req, res) => {
     if (!req?.body?.funfacts || !req?.body?.stateCode){
@@ -74,5 +174,10 @@ const addNewFact = async (req, res) => {
 module.exports = {
     getAllStates,
     updateFact,
-    getState
+    getState,
+    getFunFact,
+    getCapital,
+    getNickname,
+    getPopulation,
+    getAdmission
 };
