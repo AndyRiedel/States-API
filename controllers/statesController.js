@@ -76,10 +76,12 @@ const getFunFact = async (req, res) => {
     if (validState(stateParam)){
         let states = await getStates();
         states = states.filter(st => st.code == stateParam.toUpperCase());
-        let factsLength = states[0]['funfacts'].length;
+        states = states[0]
+        //check if funfacts key in states, 0 if not and length of funfacts array if so
+        let factsLength = states.hasOwnProperty('funfacts') ? states['funfacts'].length : 0;
         if (factsLength > 0){
             res.json({
-                "funfact": states[0].funfacts[Math.floor(Math.random() * factsLength)]
+                "funfact": states.funfacts[Math.floor(Math.random() * factsLength)]
             });
         }
         else {
