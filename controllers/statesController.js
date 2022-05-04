@@ -203,11 +203,39 @@ const addNewFact = async (req, res) => {
 }
 
  const updateFact = async (req, res) => {
-    if (!req?.body?.index){
+    let stateParam = req.params.state.toUpperCase();
+    if (!validState(stateParam)){//if no valid state abbrev. param, return invalid state message
+        return res.json({"message": "Invalid state abbreviation parameter"});
+    }
+    if (!req?.body?.index || req?.body?.index < 1){//if no index value passed or index == 0
         return res.status(400).json({'message': 'State fun fact index value required'});
     }
-    //const thisState = await State.findOne({stateCode: req.})
-    
+    if (!req?.body?.funfact){//if funfacts not in request body, return
+        return res.status(400).json({'message': 'State fun facts value required'});
+    }
+    let factParam = req?.body?.funfact;
+    let indexParam = req?.body?.index;
+    try {
+        const thisState = await State.findOne({stateCode: stateParam}).exec();
+        if (indexParam > thisState.funfacts.length){//out of bounds index passed
+            //need to get state name for return message
+            let states = await getStates();
+            states = states.filter(st => st.code == stateParam);
+            return res.json( {
+                "message": "No Fun Fact found at that index for " + states[0].state
+            });
+        }
+        //in bounds index, update the funfacts array
+        indexParam = indexParam - 1;//adjust index
+        thisState.funfacts[indexParam] = factParam;//update array
+        const result = await thisState.save();//save the updated array
+        console.log(result);
+        return res.json(result);
+    }
+    catch (err) {
+        console.error(err);
+    }
+
 }
 
 const deleteFact = async (req, res) => {
