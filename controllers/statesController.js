@@ -154,15 +154,49 @@ const getAdmission = async (req, res) => {
 }
 
 const addNewFact = async (req, res) => {
-    if (!req?.body?.funfacts || !req?.body?.stateCode){
+    let stateParam = req.params.state.toUpperCase();
+    if (!validState(stateParam)){//if no valid state abbrev. param, return invalid state message
+        return res.json({"message": "Invalid state abbreviation parameter"});
+    }
+    if (!req?.body?.funfacts){//if funfacts not in request body, return
         return res.status(400).json({'message': 'State fun facts value required'});
     }
+    let factParam = req?.body?.funfacts;
+    if (!Array.isArray(factParam)){//if passed funfacts param isn't an array return
+        return res.status(400).json({"message": "State fun facts value must be an array"});
+    }
     try {
-        //add code to add a new funfact to the MongoDB
+        const thisState = await State.findOne({stateCode: stateParam}).exec();
+        if (!thisState){//if no result, create that document
+            const result = await State.create({
+                stateCode: stateParam,
+                funfacts: factParam
+            });
+            return res.status(201).json(result);
+        }
+        else {//if result, update funfacts for that document
+            //deduplicate the two arrays
+            let newFacts = thisState.funfacts;
+            for (let i = 0; i < factParam.length; i++){//for each new fact
+                for (let j = 0; j < newFacts.length; j++){//check against each old fact
+                    if (factParam[i] == newFacts[j]){
+                        break;//if dupe, skip to next iteration of outer loop
+                    }
+                }
+                //arrive here after inner loop if no dupes found, push new fact
+                newFacts = newFacts.concat(factParam[i]);
+            }
+            thisState.funfacts = newFacts;//old array in same order, plus new facts
+            const result = await thisState.save();//save the new funfacts
+            return res.json(result);
+        }
+
+
     } 
     catch (err) {
         console.error(err);
     }
+    
 }
 
  const updateFact = async (req, res) => {
@@ -173,6 +207,12 @@ const addNewFact = async (req, res) => {
     
 }
 
+const deleteFact = async (req, res) => {
+    if (!req?.body?.index){
+        return res.status(400).json({'message': 'State fun fact index value required'});
+    }    
+}
+
 module.exports = {
     getAllStates,
     updateFact,
@@ -181,5 +221,7 @@ module.exports = {
     getCapital,
     getNickname,
     getPopulation,
-    getAdmission
+    getAdmission,
+    addNewFact,
+    deleteFact
 };

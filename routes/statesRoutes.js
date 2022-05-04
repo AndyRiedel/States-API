@@ -4,7 +4,11 @@ const statesController = require('../controllers/statesController');
 
 
 
-router.route('/:state/funfact').get(statesController.getFunFact);
+router.route('/:state/funfact')
+    .get(statesController.getFunFact)
+    .post(statesController.addNewFact)
+    .patch(statesController.updateFact)
+    .delete(statesController.deleteFact);
 router.route('/:state/capital').get(statesController.getCapital);
 router.route('/:state/nickname').get(statesController.getNickname);
 router.route('/:state/population').get(statesController.getPopulation);
