@@ -178,13 +178,16 @@ const addNewFact = async (req, res) => {
             //deduplicate the two arrays
             let newFacts = thisState.funfacts;
             for (let i = 0; i < factParam.length; i++){//for each new fact
+                let isDupe = false;
                 for (let j = 0; j < newFacts.length; j++){//check against each old fact
                     if (factParam[i] == newFacts[j]){
-                        break;//if dupe, skip to next iteration of outer loop
+                        isDupe = true;
                     }
                 }
                 //arrive here after inner loop if no dupes found, push new fact
-                newFacts = newFacts.concat(factParam[i]);
+                if (!isDupe) {
+                    newFacts = newFacts.concat(factParam[i]);
+                }
             }
             thisState.funfacts = newFacts;//old array in same order, plus new facts
             const result = await thisState.save();//save the new funfacts
