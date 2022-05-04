@@ -45,7 +45,7 @@ const getState = async (req, res) => {
         res.json(states.filter(st => st.code == stateParam.toUpperCase())[0]);
     }
     else {
-        res.json({"message": "Invalid state abbreviation parameter"});
+        res.status(400).json({"message": "Invalid state abbreviation parameter"});
     }
 }
 
@@ -65,7 +65,7 @@ const getCapital = async (req, res) => {
 
     }   
     else {
-        res.json({"message": "Invalid state abbreviation parameter"});
+        res.status(400).json({"message": "Invalid state abbreviation parameter"});
     }
 }
 
@@ -91,7 +91,7 @@ const getFunFact = async (req, res) => {
 
     }   
     else {
-        res.json({"message": "Invalid state abbreviation parameter"});
+        res.status(400).json({"message": "Invalid state abbreviation parameter"});
     }
 }
 
@@ -110,7 +110,7 @@ const getPopulation = async (req, res) => {
 
     }   
     else {
-        res.json({"message": "Invalid state abbreviation parameter"});
+        res.status(400).json({"message": "Invalid state abbreviation parameter"});
     }
 }
 
@@ -129,7 +129,7 @@ const getNickname = async (req, res) => {
 
     }   
     else {
-        res.json({"message": "Invalid state abbreviation parameter"});
+        res.status(400).json({"message": "Invalid state abbreviation parameter"});
     }
 }
 
@@ -149,14 +149,14 @@ const getAdmission = async (req, res) => {
 
     }   
     else {
-        res.json({"message": "Invalid state abbreviation parameter"});
+        res.status(400).json({"message": "Invalid state abbreviation parameter"});
     }
 }
 
 const addNewFact = async (req, res) => {
     let stateParam = req.params.state.toUpperCase();
     if (!validState(stateParam)){//if no valid state abbrev. param, return invalid state message
-        return res.json({"message": "Invalid state abbreviation parameter"});
+        return res.status(400).json({"message": "Invalid state abbreviation parameter"});
     }
     if (!req?.body?.funfacts){//if funfacts not in request body, return
         return res.status(400).json({'message': 'State fun facts value required'});
@@ -205,7 +205,7 @@ const addNewFact = async (req, res) => {
  const updateFact = async (req, res) => {
     let stateParam = req.params.state.toUpperCase();
     if (!validState(stateParam)){//if no valid state abbrev. param, return invalid state message
-        return res.json({"message": "Invalid state abbreviation parameter"});
+        return res.status(400).json({"message": "Invalid state abbreviation parameter"});
     }
     if (!req?.body?.index || req?.body?.index < 1){//if no index value passed or index == 0
         return res.status(400).json({'message': 'State fun fact index value required'});
@@ -240,7 +240,7 @@ const addNewFact = async (req, res) => {
 const deleteFact = async (req, res) => {
     let stateParam = req.params.state.toUpperCase();
     if (!validState(stateParam)){//if no valid state abbrev. param, return invalid state message
-        return res.json({"message": "Invalid state abbreviation parameter"});
+        return res.status(400).json({"message": "Invalid state abbreviation parameter"});
     }
     if (!req?.body?.index || req?.body?.index < 1){//if no index value passed or index == 0
         return res.status(400).json({'message': 'State fun fact index value required'});
