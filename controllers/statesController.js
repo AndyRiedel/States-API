@@ -212,7 +212,7 @@ const addNewFact = async (req, res) => {
         return res.status(400).json({'message': 'State fun fact index value required'});
     }
     if (!req?.body?.funfact || typeof(req?.body?.funfact) != "string"){//if funfacts not in request body, return
-        return res.status(400).json({'message': 'State fun facts value required'});
+        return res.status(400).json({'message': 'State fun fact value required'});
     }
     let factParam = req?.body?.funfact;
     let indexParam = req?.body?.index;
