@@ -104,7 +104,7 @@ const getPopulation = async (req, res) => {
         states = states.filter(st => st.code == stateParam.toUpperCase());
         res.json(states.map(el => ({
             state: el.state,
-            population: el.population
+            population: String(el.population).replace(/\B(?=(\d{3})+(?!\d))/g, ',')
         }))[0]);
 
 
