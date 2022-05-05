@@ -4,6 +4,7 @@ const data = {};
 data.stateJSON = require('../model/states.json');
 const joinHandler = require('../middleware/joinHandler');
 const { json } = require('express/lib/response');
+const States = require('../model/States');
 
 
 
@@ -210,13 +211,18 @@ const addNewFact = async (req, res) => {
     if (!req?.body?.index || req?.body?.index < 1){//if no index value passed or index == 0
         return res.status(400).json({'message': 'State fun fact index value required'});
     }
-    if (!req?.body?.funfact){//if funfacts not in request body, return
+    if (!req?.body?.funfact || typeof(req?.body?.funfact) != "string"){//if funfacts not in request body, return
         return res.status(400).json({'message': 'State fun facts value required'});
     }
     let factParam = req?.body?.funfact;
     let indexParam = req?.body?.index;
     try {
         const thisState = await State.findOne({stateCode: stateParam}).exec();
+        if (thisState == null){//if no funfacts for state exist to update
+            let states = await getStates();
+            states = states.filter(st => st.code == stateParam);
+            return res.status(400).json({"message": "No Fun Facts found for " + states[0].state});
+        }
         if (indexParam > thisState.funfacts.length){//out of bounds index passed
             //need to get state name for return message
             let states = await getStates();
@@ -248,6 +254,11 @@ const deleteFact = async (req, res) => {
     let indexParam = req?.body?.index;
     try {
         const thisState = await State.findOne({stateCode: stateParam}).exec();
+        if (thisState == null){//if state doesn't exist in mongodb
+            let states = await getStates();
+            states = states.filter(st => st.code == stateParam);
+            return res.status(400).json({"message": "No Fun Facts found for " + states[0].state});
+        }
         if (indexParam > thisState.funfacts.length){//out of bounds index passed
             let states = await getStates();
             states = states.filter(st => st.code == stateParam);
